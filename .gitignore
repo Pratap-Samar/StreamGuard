@@ -1,0 +1,25 @@
+# Internal documentation (private to the owner; not published)
+/AGENTS.md
+/DECISIONS.md
+/LEARNING_GUIDE.md
+/PROJECT_STATE.md
+/REQUIREMENTS.md
+/WORKLOG.md
+
+# Build outputs
+bin/
+obj/
+Oldphase/
+# Visual Studio
+.vs/
+
+# User-specific files
+*.user
+*.suo
+
+# Sample data (large logs)
+samples/
+
+# OS files
+Thumbs.db
+.DS_Store
