@@ -10,7 +10,7 @@ The project's primary engineering challenge is processing multi-gigabyte input w
 
 ## Current Status
 
-**Phase 2 — Security Event Parsing**
+**Phase 3 — Bounded Telemetry**
 
 Implemented and verified:
 
@@ -22,7 +22,9 @@ Implemented and verified:
   - Invalid-user probe
   - Sudo/privilege escalation
 - Extracts timestamp, username, and source IP per event.
-- Reports total lines, matched lines, and execution time.
+- Tracks event counts.
+- Tracks bounded top usernames and source IPs with capacity 100.
+- Reports total lines, matched lines, event counts, top usernames, top source IPs, and execution time.
 
 ## Usage
 
@@ -35,9 +37,12 @@ Example:
 Output:
 
     File scanned: samples/sample.log
-    Lines processed: 6
-    Matched lines: 5
-    Execution time: 00:00:00.1026962
+    Lines processed: 7
+    Matched lines: 6
+    Event counts: FailedAuthentication=2, SuccessfulAuthentication=1, InvalidUserProbe=2, SudoEscalation=1
+    Top usernames: alice (3), bob (1), guest (1), root (1)
+    Top source IPs: 192.168.1.10 (3), 192.168.1.20 (1), 192.168.1.50 (1)
+    Execution time: 00:00:00.0727714
 
 If no path is given, a usage message is printed and the process exits with a non-zero status. If the file does not exist, an error is printed and the process exits with a non-zero status.
 
@@ -61,7 +66,7 @@ If no path is given, a usage message is printed and the process exits with a non
 
 ## Architecture
 
-Phase 2 implements streaming input and security-event parsing. Later phases add telemetry, threat assessment, and reporting.
+Phase 3 implements streaming input, security-event parsing, and bounded telemetry. Later phases add threat assessment and reporting.
 
 ```text
 Log File
@@ -70,10 +75,10 @@ Log File
 Streaming Reader        ← implemented
    │
    ▼
-Security Event Parser   ← implemented in Phase 2
+Security Event Parser   ← implemented
    │
    ▼
-Bounded Telemetry       (planned)
+Bounded Telemetry       ← implemented in Phase 3
    │
    ▼
 Threat Assessment       (planned)
