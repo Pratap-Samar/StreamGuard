@@ -20,6 +20,9 @@ Oldphase/
 # Sample data (large logs)
 samples/
 
+# Generated report
+/report.json
+
 # OS files
 Thumbs.db
 .DS_Store
