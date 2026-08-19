@@ -1,4 +1,5 @@
 Aug 15 10:01:22 host sshd[1234]: Failed password for invalid user root from 192.168.1.10 port 51234 ssh2
+Aug 15 10:01:45 host sshd[1239]: Invalid user guest from 192.168.1.20 port 51240
 Aug 15 10:02:10 host sshd[1235]: Accepted password for alice from 192.168.1.50 port 54321 ssh2
 Aug 15 10:03:45 host sshd[1236]: Failed password for alice from 192.168.1.10 port 51235 ssh2
 Aug 15 10:04:01 host sudo: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/bin/bash

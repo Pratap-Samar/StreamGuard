@@ -68,4 +68,27 @@ public class ScanTests
             File.Delete(path);
         }
     }
+
+    [Fact]
+    public async Task ScanAsync_CountsMatchedLines()
+    {
+        string path = Path.GetTempFileName();
+        try
+        {
+            await File.WriteAllTextAsync(
+                path,
+                "Aug 15 10:01:22 host sshd[1234]: Failed password for invalid user root from 192.168.1.10 port 51234 ssh2\n"
+                + "Aug 15 10:02:10 host sshd[1235]: Accepted password for alice from 192.168.1.50 port 54321 ssh2\n"
+                + "Aug 15 10:06:11 host sshd[1238]: Connection closed by authenticating user alice 192.168.1.50 port 54322\n");
+
+            ScanResult result = await LogScanner.ScanAsync(path);
+
+            Assert.Equal(3, result.LineCount);
+            Assert.Equal(2, result.MatchedLines);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
 }

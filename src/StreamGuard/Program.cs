@@ -19,6 +19,7 @@ ScanResult result = await LogScanner.ScanAsync(path);
 
 Console.WriteLine($"File scanned: {result.Path}");
 Console.WriteLine($"Lines processed: {result.LineCount}");
+Console.WriteLine($"Matched lines: {result.MatchedLines}");
 Console.WriteLine($"Execution time: {result.Duration}");
 
 return 0;

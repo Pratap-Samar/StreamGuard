@@ -10,16 +10,19 @@ The project's primary engineering challenge is processing multi-gigabyte input w
 
 ## Current Status
 
-**Phase 1 — Core Streaming Engine**
+**Phase 2 — Security Event Parsing**
 
-The core streaming architecture is implemented and verified:
+Implemented and verified:
 
-- Accepts a log-file path as a command-line argument.
-- Validates that the path was provided and that the file exists.
-- Reads the file sequentially with `StreamReader.ReadLineAsync()`.
-- Counts the total lines processed.
-- Measures execution time with `Stopwatch`.
-- Prints a concise summary (file, line count, execution time).
+- Accepts a log-file path as a command-line argument and validates it.
+- Reads the file sequentially with `StreamReader.ReadLineAsync()`, counting lines.
+- Detects four security event types on syslog `auth.log` lines:
+  - Failed authentication
+  - Successful authentication
+  - Invalid-user probe
+  - Sudo/privilege escalation
+- Extracts timestamp, username, and source IP per event.
+- Reports total lines, matched lines, and execution time.
 
 ## Usage
 
@@ -33,7 +36,8 @@ Output:
 
     File scanned: samples/sample.log
     Lines processed: 6
-    Execution time: 00:00:00.0154540
+    Matched lines: 5
+    Execution time: 00:00:00.1026962
 
 If no path is given, a usage message is printed and the process exits with a non-zero status. If the file does not exist, an error is printed and the process exits with a non-zero status.
 
@@ -53,19 +57,20 @@ If no path is given, a usage message is printed and the process exits with a non
 - .NET 10
 - `StreamReader`
 - `ReadLineAsync()`
+- `System.Text.RegularExpressions`
 
 ## Architecture
 
-Phase 1 implements only the streaming reader stage. Later phases add event parsing, telemetry, threat assessment, and reporting.
+Phase 2 implements streaming input and security-event parsing. Later phases add telemetry, threat assessment, and reporting.
 
 ```text
 Log File
    │
    ▼
-Streaming Reader        ← implemented in Phase 1
+Streaming Reader        ← implemented
    │
    ▼
-Security Event Parser   (planned)
+Security Event Parser   ← implemented in Phase 2
    │
    ▼
 Bounded Telemetry       (planned)
