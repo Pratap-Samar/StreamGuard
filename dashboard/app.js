@@ -54,7 +54,6 @@ function render(report) {
   $("event-successful").textContent = number(summary.eventCounts.SuccessfulAuthentication);
   $("event-probes").textContent = number(summary.eventCounts.InvalidUserProbe);
   $("event-sudo").textContent = number(summary.eventCounts.SudoEscalation);
-  $("scan-timestamp").textContent = report.scanTimestamp ?? "Not included in report";
   $("threat-explanation").textContent = threat.explanation;
   $("usernames-table").innerHTML = renderTable(summary.topUsernames); $("ips-table").innerHTML = renderTable(summary.topSourceIps);
   renderChart(summary.eventCounts);
