@@ -27,3 +27,7 @@ Most browsers block `fetch()` when opening `index.html` from the file system. Th
 ## Usage
 
 Open the dashboard to load `../report.json`. Use **Choose report** to load another completed report. Use **Reload report** after regenerating the current report.
+
+## Dashboard Preview
+
+![Dashboard Preview](assets/Dashboard-Preview.png)

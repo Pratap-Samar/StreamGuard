@@ -50,6 +50,10 @@ function render(report) {
   $("execution-time").textContent = `${Number(report.durationMilliseconds).toFixed(2)} ms`; $("source-file").textContent = report.file;
   $("file-path").textContent = report.file; $("loaded-report").textContent = currentSource.label;
   $("failure-signals").textContent = number(threat.failureSignals); $("successful-authentications").textContent = number(threat.successfulAuthentications); $("sudo-events").textContent = number(threat.sudoEvents);
+  $("event-failed").textContent = number(summary.eventCounts.FailedAuthentication);
+  $("event-successful").textContent = number(summary.eventCounts.SuccessfulAuthentication);
+  $("event-probes").textContent = number(summary.eventCounts.InvalidUserProbe);
+  $("event-sudo").textContent = number(summary.eventCounts.SudoEscalation);
   $("scan-timestamp").textContent = report.scanTimestamp ?? "Not included in report";
   $("threat-explanation").textContent = threat.explanation;
   $("usernames-table").innerHTML = renderTable(summary.topUsernames); $("ips-table").innerHTML = renderTable(summary.topSourceIps);
