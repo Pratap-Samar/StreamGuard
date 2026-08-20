@@ -1,0 +1,54 @@
+{
+  "file": "samples/sample.log",
+  "durationMilliseconds": 194.3373,
+  "summary": {
+    "totalLines": 7,
+    "matchedLines": 6,
+    "eventCounts": {
+      "FailedAuthentication": 2,
+      "SuccessfulAuthentication": 1,
+      "InvalidUserProbe": 2,
+      "SudoEscalation": 1
+    },
+    "topUsernames": [
+      {
+        "value": "alice",
+        "count": 3
+      },
+      {
+        "value": "bob",
+        "count": 1
+      },
+      {
+        "value": "guest",
+        "count": 1
+      },
+      {
+        "value": "root",
+        "count": 1
+      }
+    ],
+    "topSourceIps": [
+      {
+        "value": "192.168.1.10",
+        "count": 3
+      },
+      {
+        "value": "192.168.1.20",
+        "count": 1
+      },
+      {
+        "value": "192.168.1.50",
+        "count": 1
+      }
+    ]
+  },
+  "threatAssessment": {
+    "level": "Medium",
+    "failureToSuccessRatio": 4,
+    "failureSignals": 4,
+    "successfulAuthentications": 1,
+    "sudoEvents": 1,
+    "explanation": "Failure-to-success ratio: 4.00 (4 failure signals / 1 successful authentications); Sudo events: 1; threat level: MEDIUM."
+  }
+}

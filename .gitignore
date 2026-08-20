@@ -17,8 +17,9 @@ Oldphase/
 *.user
 *.suo
 
-# Sample data (large logs)
-samples/
+# Large/generated sample data
+/samples/massive_auth.log
+/samples/benchmarks/
 
 # Generated report
 /report.json
