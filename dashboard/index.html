@@ -15,7 +15,7 @@
       <header class="hero">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div><p class="eyebrow">Security telemetry</p><h1>StreamGuard</h1><p class="subtitle">Completed scan report <span class="status-dot"></span> Report-driven analysis</p></div>
+          <div><p class="eyebrow">Security log analysis</p><h1>StreamGuard</h1><p class="subtitle">Completed scan report <span class="status-dot"></span> Report-driven analysis</p></div>
         </div>
         <div class="controls" aria-label="Report controls">
           <label class="file-button" for="report-file">Choose report<input id="report-file" type="file" accept="application/json,.json"></label>
@@ -40,8 +40,8 @@
         </section>
 
         <section class="metric-grid" aria-label="Scan summary">
-          <article class="metric-card"><span class="metric-label">Total lines</span><strong id="total-lines">—</strong><small>Events scanned</small></article>
-          <article class="metric-card"><span class="metric-label">Matched lines</span><strong id="matched-lines">—</strong><small>Security-relevant activity</small></article>
+          <article class="metric-card"><span class="metric-label">Total lines</span><strong id="total-lines">—</strong><small>Log lines analyzed</small></article>
+          <article class="metric-card"><span class="metric-label">Matched lines</span><strong id="matched-lines">—</strong><small>Matched security events</small></article>
           <article class="metric-card"><span class="metric-label">Execution time</span><strong id="execution-time">—</strong><small>Completed analysis</small></article>
           <article class="metric-card file-card"><span class="metric-label">Source file</span><strong id="source-file">—</strong><small>Scan input</small></article>
         </section>
@@ -52,7 +52,7 @@
             <article class="event-item failed"><span>Failed authentication</span><strong id="event-failed">—</strong></article>
             <article class="event-item successful"><span>Successful authentication</span><strong id="event-successful">—</strong></article>
             <article class="event-item probe"><span>Invalid-user probes</span><strong id="event-probes">—</strong></article>
-            <article class="event-item sudo"><span>Sudo events</span><strong id="event-sudo">—</strong></article>
+            <article class="event-item sudo"><span>Sudo escalation events</span><strong id="event-sudo">—</strong></article>
           </div>
           <div class="chart-wrap"><canvas id="event-chart" aria-label="Security event distribution chart"></canvas></div>
         </section>
@@ -63,7 +63,7 @@
             <dl class="assessment-list">
               <div><dt>Failure signals</dt><dd id="failure-signals">—</dd></div>
               <div><dt>Successful authentications</dt><dd id="successful-authentications">—</dd></div>
-              <div><dt>Sudo events</dt><dd id="sudo-events">—</dd></div>
+              <div><dt>Sudo escalation events</dt><dd id="sudo-events">—</dd></div>
             </dl>
             <p id="threat-explanation" class="explanation"></p>
           </section>
@@ -74,8 +74,8 @@
         </div>
 
         <div class="two-column">
-          <section class="panel" aria-labelledby="users-heading"><div class="panel-heading"><div><p class="eyebrow">Bounded telemetry</p><h2 id="users-heading">Top usernames</h2></div></div><div id="usernames-table"></div></section>
-          <section class="panel" aria-labelledby="ips-heading"><div class="panel-heading"><div><p class="eyebrow">Bounded telemetry</p><h2 id="ips-heading">Top source IPs</h2></div></div><div id="ips-table"></div></section>
+          <section class="panel" aria-labelledby="users-heading"><div class="panel-heading"><div><p class="eyebrow">Bounded statistics</p><h2 id="users-heading">Top usernames</h2></div></div><div id="usernames-table"></div></section>
+          <section class="panel" aria-labelledby="ips-heading"><div class="panel-heading"><div><p class="eyebrow">Bounded statistics</p><h2 id="ips-heading">Top source IPs</h2></div></div><div id="ips-table"></div></section>
         </div>
         <p class="notice">Top username and source-IP statistics are bounded estimates and may not represent exact global frequencies.</p>
       </div>

@@ -8,18 +8,18 @@ let currentSource = { type: "url", value: DEFAULT_REPORT_PATH, label: DEFAULT_RE
 const $ = (id) => document.getElementById(id);
 const number = (value) => new Intl.NumberFormat().format(value);
 
-function required(value, name) {
-  if (value === undefined || value === null) throw new Error(`The report is missing the expected “${name}” field.`);
-  return value;
+function required(obj, propName) {
+  if (obj[propName] === undefined || obj[propName] === null) throw new Error(`The report is missing the expected “${propName}” field.`);
+  return obj[propName];
 }
 
 function validate(report) {
   required(report, "file"); required(report, "durationMilliseconds");
   const summary = required(report, "summary"); const threat = required(report, "threatAssessment");
-  ["totalLines", "matchedLines", "eventCounts", "topUsernames", "topSourceIps"].forEach((key) => required(summary[key], `summary.${key}`));
-  ["level", "failureToSuccessRatio", "failureSignals", "successfulAuthentications", "sudoEvents", "explanation"].forEach((key) => required(threat[key], `threatAssessment.${key}`));
+  ["totalLines", "matchedLines", "eventCounts", "topUsernames", "topSourceIps"].forEach((key) => required(summary, key));
+  ["level", "failureToSuccessRatio", "failureSignals", "successfulAuthentications", "sudoEvents", "explanation"].forEach((key) => required(threat, key));
   if (!Array.isArray(summary.topUsernames) || !Array.isArray(summary.topSourceIps)) throw new Error("The bounded telemetry fields must be arrays.");
-  EVENT_KEYS.forEach((key) => required(summary.eventCounts[key], `summary.eventCounts.${key}`));
+  EVENT_KEYS.forEach((key) => required(summary.eventCounts, key));
 }
 
 function escapeHtml(value) { const element = document.createElement("span"); element.textContent = String(value); return element.innerHTML; }
