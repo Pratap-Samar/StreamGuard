@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/StreamGuard/StreamGuard.csproj" />
+    <Project Path="src/StreamGuard.Api/StreamGuard.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/StreamGuard.Tests/StreamGuard.Tests.csproj" />

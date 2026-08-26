@@ -18,6 +18,12 @@
           <div><p class="eyebrow">Security log analysis</p><h1>StreamGuard</h1><p class="subtitle">Completed scan report <span class="status-dot"></span> Report-driven analysis</p></div>
         </div>
         <div class="controls" aria-label="Report controls">
+          <div id="live-status" class="live-status">
+            <span id="live-indicator" class="status-dot"></span>
+            <span id="live-text">Live API</span>
+            <small id="live-time"></small>
+          </div>
+          <button id="live-button" class="button" type="button">Live API</button>
           <label class="file-button" for="report-file">Choose report<input id="report-file" type="file" accept="application/json,.json"></label>
           <button id="reload-button" class="button" type="button">Reload report</button>
         </div>

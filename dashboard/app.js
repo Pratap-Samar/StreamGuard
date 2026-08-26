@@ -59,29 +59,106 @@ function render(report) {
   renderChart(summary.eventCounts);
 }
 
+const API_REPORT_URL = "/api/report";
+let liveMode = false;
+let pollingInterval = null;
+let isFetching = false;
+let lastRawReport = null;
+
 async function loadReport() {
+  if (isFetching) return;
+  isFetching = true;
   try {
     let raw;
     if (currentSource.type === "file") raw = await currentSource.value.text();
+    else if (currentSource.type === "api") {
+      const response = await fetch(currentSource.value, { cache: "no-store" });
+      if (!response.ok) throw new Error(`API returned HTTP ${response.status}.`);
+      raw = await response.text();
+    }
     else {
       const response = await fetch(currentSource.value, { cache: "no-store" });
       if (!response.ok) throw new Error(`Could not find ${currentSource.value} (HTTP ${response.status}). Choose a report file or serve the repository root locally.`);
       raw = await response.text();
     }
-    try { render(JSON.parse(raw)); } catch (error) { if (error instanceof SyntaxError) throw new Error("The selected report is not valid JSON."); throw error; }
+    try {
+      const parsed = JSON.parse(raw);
+      updateLiveStatus(true);
+      if (raw !== lastRawReport) {
+        render(parsed);
+        lastRawReport = raw;
+      }
+    } catch (error) {
+      if (error instanceof SyntaxError) throw new Error("The selected report is not valid JSON.");
+      throw error;
+    }
   } catch (error) {
     const message = currentSource.type === "url" && window.location.protocol === "file:"
       ? "Your browser blocks automatic report loading when this page is opened directly from a file. Use “Choose report” to select report.json, or open the dashboard through http://localhost:8080/dashboard/."
       : (error.message || "An unexpected error occurred while loading the report.");
-    showError(message);
+    
+    if (liveMode) {
+        updateLiveStatus(false);
+        // Do not destroy current report on transient API failure
+    } else {
+        showError(message);
+    }
+  } finally {
+      isFetching = false;
   }
+}
+
+function updateLiveStatus(success) {
+    if (!liveMode) {
+        $("live-status").style.display = "none";
+        return;
+    }
+    $("live-status").style.display = "flex";
+    if (success) {
+        $("live-indicator").className = "status-dot active";
+        $("live-text").textContent = "Live API connected";
+        $("live-time").textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+    } else {
+        $("live-indicator").className = "status-dot error";
+        $("live-text").textContent = "API unavailable";
+        $("live-time").textContent = "Using current report";
+    }
+}
+
+function enableLiveMode() {
+    liveMode = true;
+    currentSource = { type: "api", value: API_REPORT_URL, label: "Live API" };
+    loadReport();
+    if (pollingInterval) clearInterval(pollingInterval);
+    pollingInterval = setInterval(loadReport, 5000);
+    $("live-button").style.display = "none";
+    updateLiveStatus(false); // initializing
+}
+
+function disableLiveMode() {
+    liveMode = false;
+    if (pollingInterval) clearInterval(pollingInterval);
+    $("live-button").style.display = "inline-flex";
+    updateLiveStatus(false);
 }
 
 $("report-file").addEventListener("change", (event) => {
   const file = event.target.files[0];
   if (!file) return;
+  disableLiveMode();
+  lastRawReport = null;
   currentSource = { type: "file", value: file, label: file.name };
   loadReport();
 });
-$("reload-button").addEventListener("click", loadReport);
+
+$("reload-button").addEventListener("click", () => {
+    disableLiveMode();
+    lastRawReport = null;
+    loadReport();
+});
+
+$("live-button").addEventListener("click", enableLiveMode);
+
+// Initialize UI state
+$("live-status").style.display = "none";
 loadReport();

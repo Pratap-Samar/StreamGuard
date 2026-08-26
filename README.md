@@ -57,6 +57,7 @@ Dashboard
 
 - C#
 - .NET 10 console application
+- ASP.NET Core Web API (Minimal APIs)
 - `StreamReader`
 - `ReadLineAsync()`
 - `System.Text.RegularExpressions`
@@ -85,6 +86,8 @@ The current test suite contains 41 tests, all passing.
 
 ## Usage
 
+### 1. Run the Analyzer
+
 ```text
 dotnet run --project src/StreamGuard -- <path-to-log>
 ```
@@ -95,11 +98,19 @@ Example:
 dotnet run --project src/StreamGuard -- samples/sample.log
 ```
 
-Use `--output <path>` to choose a different report path:
+Use `--output <path>` to choose a different report path (the dashboard expects `report.json` in the root by default):
 
 ```text
-dotnet run --project src/StreamGuard -- samples/sample.log --output output/report.json
+dotnet run --project src/StreamGuard -- samples/sample.log --output report.json
 ```
+
+### 2. Run the Dashboard
+
+```text
+dotnet run --project src/StreamGuard.Api
+```
+
+Then open `http://localhost:5000/dashboard/` in your browser.
 
 ## Output
 
@@ -168,15 +179,19 @@ The dashboard is a standalone presentation layer that consumes the generated `re
 
 ### Run Locally
 
-From the repository root, run a static server:
+The dashboard and the live report API are served together from the ASP.NET Core API project.
+
+1. Start the ASP.NET Core API:
 
 ```powershell
-python -m http.server 8080
+dotnet run --project src/StreamGuard.Api
 ```
 
-Open `http://localhost:8080/dashboard/`. Generate the report at the repository root with `--output report.json`, or select a completed JSON report manually via **Choose report**.
+2. Open the dashboard in your browser:
 
-Most browsers block `fetch()` when opening `index.html` directly from the file system. The file picker may still work, but a local static server is the reliable option.
+`http://localhost:5000/dashboard/`
+
+Generate the report at the repository root (or let the analyzer write to the default location), and the dashboard will automatically pick it up when you select **Live API**. You can also manually load any JSON report via the **Choose report** button.
 
 ### Dashboard Preview
 
@@ -185,6 +200,29 @@ Most browsers block `fetch()` when opening `index.html` directly from the file s
 
 The dashboard is presentation/report-review only. It does not perform the core log analysis.
 
+### Live Dashboard API
+
+The project includes an ASP.NET Core Web API to serve the latest `report.json` to the dashboard automatically, providing a live-update experience. ASP.NET Core serves both the dashboard static files and the report API, removing the need for a separate Python web server.
+
+**Why it exists**: The API acts purely as a report delivery layer. It avoids duplicating the core log analysis logic while allowing the dashboard to poll for the latest generated report without requiring the user to manually select the file.
+
+**Architecture**:
+
+```text
+                ASP.NET Core
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+    /dashboard/             /api/report
+          │                     │
+    HTML/CSS/JS              report.json
+          │                     │
+          └──────────┬──────────┘
+                     ▼
+                  Browser
+```
+
+The dashboard will automatically attempt to connect to the Live API and poll every 5 seconds. If the API is offline or unreachable, the dashboard safely falls back and allows manual report selection. Because the dashboard and API share the same origin, CORS is not required.
 ## Performance & Memory Validation
 
 ### Methodology
@@ -278,14 +316,17 @@ StreamGuard/
 │   └── benchmarks/                 # Generated benchmark inputs (gitignored)
 │
 ├── src/
-│   └── StreamGuard/                # Console application
+│   ├── StreamGuard/                # Console application
+│   │   ├── Program.cs
+│   │   ├── LogScanner.cs
+│   │   ├── SecurityEvent.cs
+│   │   ├── SecurityEventParser.cs
+│   │   ├── ThreatAssessment.cs
+│   │   ├── ReportGenerator.cs
+│   │   └── BoundedFrequencyCounter.cs
+│   └── StreamGuard.Api/            # Live Dashboard API
 │       ├── Program.cs
-│       ├── LogScanner.cs
-│       ├── SecurityEvent.cs
-│       ├── SecurityEventParser.cs
-│       ├── ThreatAssessment.cs
-│       ├── ReportGenerator.cs
-│       └── BoundedFrequencyCounter.cs
+│       └── appsettings.json
 │
 ├── tests/                          # xUnit tests
 │   └── StreamGuard.Tests/
