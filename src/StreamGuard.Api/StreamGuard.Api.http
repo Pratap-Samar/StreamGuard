@@ -1,6 +1,6 @@
-@StreamGuard.Api_HostAddress = http://localhost:5235
+@StreamGuard.Api_HostAddress = http://localhost:5000
 
-GET {{StreamGuard.Api_HostAddress}}/weatherforecast/
+GET {{StreamGuard.Api_HostAddress}}/api/report
 Accept: application/json
 
 ###
