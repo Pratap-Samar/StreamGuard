@@ -380,3 +380,71 @@ Implemented:
 - Formal benchmark with throughput and memory measurements
 
 No further implementation phases are currently planned.
+
+## Threat Assessment & Reporting
+
+After a scan completes, `ThreatAssessor` turns the raw event counts into a
+security verdict, and `ReportGenerator` persists that verdict — together
+with all scan statistics — as `report.json`.
+
+### How the threat level is calculated
+
+```text
+failureSignals = FailedAuthentication + InvalidUserProbe
+ratio           = failureSignals / SuccessfulAuthentication
+```
+
+| Condition                          | Ratio     | Level   |
+|-------------------------------------|-----------|---------|
+| 0 successes, 0 failures             | `null`    | Low     |
+| 0 successes, failures > 0           | `null`    | High    |
+| ratio < 3                           | computed  | Low     |
+| 3 ≤ ratio < 10                      | computed  | Medium  |
+| ratio ≥ 10                          | computed  | High    |
+
+- Sudo escalation events are recorded and reported but do **not** change
+  the threat level — they're informational context, not a scoring input.
+- A ratio of exactly `3.0` or `10.0` rounds *up* to the next band
+  (thresholds are inclusive on the low end of Medium/High), so a
+  borderline case escalates rather than under-reports.
+- When there are zero successful authentications, the ratio is
+  mathematically undefined and is reported as `null` rather than `0` —
+  `0` would incorrectly imply a measured ratio of zero failures.
+
+### Report output (`report.json`)
+
+The report is written with `System.Text.Json`, using camelCase property
+names and enums serialized as strings (not integers), so it's readable
+by both the dashboard and any external tooling without a lookup table:
+
+```json
+{
+  "file": "sample.log",
+  "durationMs": 12.5,
+  "summary": {
+    "totalLines": 10,
+    "matchedLines": 6,
+    "eventCounts": {
+      "failedAuthentication": 3,
+      "successfulAuthentication": 1,
+      "invalidUserProbe": 2,
+      "sudoEscalation": 0
+    },
+    "topUsernames": [{ "value": "alice", "count": 3 }],
+    "topSourceIps": [{ "value": "192.168.1.10", "count": 4 }]
+  },
+  "threatAssessment": {
+    "level": "Medium",
+    "failureToSuccessRatio": 5.0,
+    "explanation": "Failure-to-success ratio: 5.00 ..."
+  }
+}
+```
+
+- `report.json` is overwritten on every scan — it always reflects the
+  most recent run.
+- Property names in this file form a public contract consumed by
+  `StreamGuard.Api` and the dashboard; renaming a field is a breaking
+  change and must be coordinated across those components.
+
+*(Module owner: Praharsh Srivastava — Member 4)*
