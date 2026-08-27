@@ -26,6 +26,16 @@ public class ThreatAssessmentTests
         Assert.Equal(expectedRatio, result.FailureToSuccessRatio);
     }
 
+    // -----------------------------------------------------------------------
+// File:        ThreatAssessment.cs
+// Module:      Threat Assessment (Member 4)
+// Contributor: Praharsh Srivastava
+// Description: Defines ThreatLevel, the ThreatAssessment record, and the
+//              ThreatAssessor logic that turns raw event counts from a
+//              ScanResult into a Low/Medium/High verdict, based on the
+//              failure-to-success ratio.
+// -----------------------------------------------------------------------
+
     [Fact]
     public void Assess_ZeroSuccessWithFailures_IsHighAndRatioUndefined()
     {
@@ -37,6 +47,17 @@ public class ThreatAssessmentTests
         Assert.Contains("undefined", result.Explanation);
     }
 
+    
+// -----------------------------------------------------------------------
+// File:        ReportGenerator.cs
+// Module:      Report Generation (Member 4)
+// Contributor: Praharsh Srivastava
+// Description: Merges a ScanResult and a ThreatAssessment into a single
+//              ReportDocument, serialises it to camelCase JSON with
+//              string enums, and writes report.json to disk.
+// -----------------------------------------------------------------------
+    
+
     [Fact]
     public void Assess_ZeroSuccessAndZeroFailures_IsLowAndRatioUndefined()
     {
@@ -46,6 +67,8 @@ public class ThreatAssessmentTests
         Assert.Null(result.FailureToSuccessRatio);
         Assert.Contains("Sudo events: 2", result.Explanation);
     }
+
+    
 
     [Fact]
     public void Assess_SudoIsReportedWithoutChangingRatioLevel()
@@ -80,3 +103,10 @@ public class ThreatAssessmentTests
             Array.Empty<FrequencyCount>());
     }
 }
+
+
+// -----------------------------------------------------------------------
+// Contributor: Praharsh Srivastava
+// Covers: threshold boundaries, zero-success edge cases, and the
+//         sudo-events-don't-change-ratio guarantee for ThreatAssessor.
+// -----------------------------------------------------------------------
